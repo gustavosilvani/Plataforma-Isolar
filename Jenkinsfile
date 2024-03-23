@@ -1,6 +1,12 @@
 pipeline {
   agent any
   stages {
+    stage('Preparação') {
+      steps {
+        // Limpa arquivos não rastreados e diretórios não rastreados pelo Git.
+        sh "git clean -fdx"
+      }
+    }
     stage('Build') {
       steps {
         sh "docker build . -t plataforma:last"
@@ -17,5 +23,5 @@ pipeline {
     // Configura o Jenkins para pesquisar mudanças no repositório de controle de versão conforme necessário.
     // Ajuste esta configuração conforme a frequência que deseja que os builds sejam disparados automaticamente.
     pollSCM('H * * * *')
-  }
+  }  
 }
