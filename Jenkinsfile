@@ -9,7 +9,7 @@ pipeline {
     stage('Run') {
       steps {
         // Executa a imagem Docker construída no estágio anterior mapeando a porta 4000 do container para a porta 4000 do host.
-        sh "docker run -d --name app_plataforma -p 4000:4000 plataforma:last"
+        sh "docker run -d --name app_plataforma -p 4000:8080 plataforma:last"
       }
     }
   }
