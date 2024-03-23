@@ -11,7 +11,6 @@ pipeline {
       }
       steps {
         sh "docker build . -t dockerjenkinshelloworld:${env.BUILD_ID}"
-        sh 'mvn clean package'
       }
     }
 
