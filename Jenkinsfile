@@ -22,13 +22,17 @@ pipeline {
             }
         }
         stage('Remover Container Anterior') {
-            steps {
-                script {
-                    // Remove o container anterior, se ele existir
-                    sh "docker rm -f ${CONTAINER_NAME} || true"
-                }
+    steps {
+        script {
+            // Verifica se o container existe
+            sh(script: "docker ps -a | grep ${CONTAINER_NAME}", returnStatus: true)
+            if (currentBuild.result == 'SUCCESS') {
+                // Se o container existe, ele é removido
+                sh "docker rm -f ${CONTAINER_NAME}"
             }
         }
+    }
+}
         stage('Subir Novo Container') {
             steps {
                 script {
