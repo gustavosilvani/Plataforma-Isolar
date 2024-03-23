@@ -17,27 +17,23 @@ pipeline {
             steps {
                 script {
                     // Constrói a nova imagem Docker usando o Dockerfile
-                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}")
+                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                 }
             }
         }
         stage('Remover Container Anterior') {
-    steps {
-        script {
-            // Verifica se o container existe
-            sh(script: "docker ps -a | grep ${CONTAINER_NAME}", returnStatus: true)
-            if (currentBuild.result == 'SUCCESS') {
-                // Se o container existe, ele é removido
-                sh "docker rm -f ${CONTAINER_NAME}"
+            steps {
+                script {
+                    // Verifica se o container existe e remove se existir
+                    sh "docker ps -a | grep -q ${CONTAINER_NAME} && docker rm -f ${CONTAINER_NAME} || true"
+                }
             }
         }
-    }
-}
         stage('Subir Novo Container') {
             steps {
                 script {
                     // Executa um novo container com a nova imagem
-                    docker.run("--name ${CONTAINER_NAME} -d ${IMAGE_NAME}:${IMAGE_TAG}")
+                    sh "docker run --name ${CONTAINER_NAME} -d ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
@@ -45,7 +41,7 @@ pipeline {
             steps {
                 script {
                     // Limpa imagens antigas não utilizadas
-                    sh "docker image prune -a -f"
+                    sh "docker image prune -a -f --filter 'until=24h'"
                 }
             }
         }
