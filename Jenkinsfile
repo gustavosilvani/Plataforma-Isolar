@@ -3,15 +3,13 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        // Constrói a imagem Docker com a tag "plataforma".
-        // A substituição do ${env.BUILD_ID} garante que cada build tenha uma tag única.
-        sh "docker build . -t plataforma:${env.BUILD_ID}"
+        sh "docker build . -t plataforma:last"
       }
     }
     stage('Run') {
       steps {
         // Executa a imagem Docker construída no estágio anterior mapeando a porta 4000 do container para a porta 4000 do host.
-        sh "docker run -d --name app_plataforma -p 4000:4000 plataforma:${env.BUILD_ID}"
+        sh "docker run -d --name app_plataforma -p 4000:4000 plataforma:last"
       }
     }
   }
