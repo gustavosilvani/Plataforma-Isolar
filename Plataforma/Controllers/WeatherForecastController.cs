@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Plataforma.Isolar.Controllers
+namespace Plataforma.Controllers
 {
     [ApiController]
     [Route("[controller]")]

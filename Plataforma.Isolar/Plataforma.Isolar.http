@@ -1,6 +1,0 @@
-@Plataforma.Isolar_HostAddress = http://localhost:5056
-
-GET {{Plataforma.Isolar_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

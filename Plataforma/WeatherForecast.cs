@@ -1,4 +1,4 @@
-namespace Plataforma.Isolar
+namespace Plataforma
 {
     public class WeatherForecast
     {
