@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     // Executa um novo container com a nova imagem, fazendo bind das portas 4000 e 4001
-                    sh "docker run --name ${CONTAINER_NAME} -d -p 4000:4000 -p 4001:4001 ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker run --name ${CONTAINER_NAME} -d -p 4000:8080 -p 4001:8081 ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
