@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     // Constrói a nova imagem Docker usando o Dockerfile
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f Plataforma.Isolar/Dockerfile"
+                    sh "docker build -t plataforma:latest -f Plataforma.Isolar/Dockerfile Plataforma.Isolar/"
                 }
             }
         }
