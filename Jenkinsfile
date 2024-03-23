@@ -32,8 +32,8 @@ pipeline {
         stage('Subir Novo Container') {
             steps {
                 script {
-                    // Executa um novo container com a nova imagem
-                    sh "docker run --name ${CONTAINER_NAME} -d ${IMAGE_NAME}:${IMAGE_TAG}"
+                    // Executa um novo container com a nova imagem, fazendo bind das portas 4000 e 4001
+                    sh "docker run --name ${CONTAINER_NAME} -d -p 4000:4000 -p 4001:4001 ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
