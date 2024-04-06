@@ -1,25 +1,17 @@
-var builder = WebApplication.CreateBuilder(args);
+namespace Plataforma;
 
-// Add services to the container.
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+        var startup = new Startup(builder.Configuration);
 
-var app = builder.Build();
+        startup.ConfigureServices(builder.Services);
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-app.UseSwagger();
-app.UseSwaggerUI();
-//}
+        var app = builder.Build();
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+        await startup.Configure(app, builder.Environment);
+    }
+}  
