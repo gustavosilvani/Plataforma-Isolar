@@ -1,33 +1,35 @@
 version: '3.8'
+
 services:
   plataforma:
+    image: plataforma:latest
     build:
-      context:  Plataforma/
+      context: ./Plataforma
       dockerfile: Dockerfile
     ports:
-      - "4000:8080" # Expondo a porta 8080 do aplicativo .NET no porto 4000 do host
-      - "4001:8081" # Expondo uma segunda porta, se necessário
+      - "4000:8080"
+      - "4001:8081"
+    container_name: plataforma
+    restart: unless-stopped
     depends_on:
       - mongo
-    environment:
-      - ConnectionStrings:DefaultConnection=mongodb://mongo:27017/plataforma
-    networks:
-      - app-network
 
   mongo:
-    image: mongo
-    ports:
-      - "27017:27017" # Porta padrão do MongoDB
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: plataforma
-      MONGO_INITDB_ROOT_PASSWORD: isolar@isolar
+    image: mongo:latest
+    container_name: mongo
     volumes:
-      - mongodb-data:/data/db
-    networks:
-      - app-network
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: isolar@isolar
+
+  cleanup:
+    image: docker
+    command: /bin/sh -c "docker image prune -a -f --filter 'until=24h'"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
-  mongodb-data:
-
-networks:
-  app-network:
+  mongo_data:
