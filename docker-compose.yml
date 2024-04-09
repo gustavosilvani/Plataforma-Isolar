@@ -2,7 +2,7 @@ version: '3.8'
 services:
   plataforma:
     build:
-      context: ..
+      context: .
       dockerfile: Plataforma/Dockerfile
     ports:
       - "4000:8080" # Expondo a porta 8080 do aplicativo .NET no porto 4000 do host
