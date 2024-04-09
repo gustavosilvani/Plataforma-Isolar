@@ -3,7 +3,7 @@ services:
   plataforma:
     build:
       context: .
-      dockerfile: Plataforma/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "4000:8080" # Expondo a porta 8080 do aplicativo .NET no porto 4000 do host
       - "4001:8081" # Expondo uma segunda porta, se necessário
