@@ -4,8 +4,8 @@ services:
   plataforma:
     image: plataforma:latest
     build:
-      context: ./Plataforma
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./Plataforma/Dockerfile
     ports:
       - "4000:8080"
       - "4001:8081"
