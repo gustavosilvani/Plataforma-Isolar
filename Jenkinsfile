@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        // Defina aqui o nome da sua imagem e tag
+        // Mantenha as definições de ambiente caso precise usar em comandos específicos
         IMAGE_NAME = 'plataforma'
         IMAGE_TAG = 'latest'
         CONTAINER_NAME = 'plataforma'
@@ -9,38 +9,28 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Faz o checkout do código fonte
                 checkout scm
             }
         }
-        stage('Construir e Publicar Imagem') {
+        stage('Construir e Subir Serviços') {
             steps {
                 script {
-                    // Constrói a nova imagem Docker usando o Dockerfile
-                    sh "cd Plataforma && docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                    // Utiliza docker-compose para construir e subir os serviços
+                    sh "docker-compose up -d --build"
                 }
             }
         }
-        stage('Remover Container Anterior') {
+        stage('Remover Serviços Anteriores') {
             steps {
                 script {
-                    // Verifica se o container existe e remove se existir
-                    sh "docker ps -a | grep -q ${CONTAINER_NAME} && docker rm -f ${CONTAINER_NAME} || true"
-                }
-            }
-        }
-        stage('Subir Novo Container') {
-            steps {
-                script {
-                    // Executa um novo container com a nova imagem, fazendo bind das portas 4000 e 4001
-                    sh "docker run --name ${CONTAINER_NAME} -d -p 4000:8080 -p 4001:8081 ${IMAGE_NAME}:${IMAGE_TAG}"
+                    // Utiliza docker-compose para parar e remover os serviços anteriores
+                    sh "docker-compose down"
                 }
             }
         }
         stage('Limpeza') {
             steps {
                 script {
-                    // Limpa imagens antigas não utilizadas
                     sh "docker image prune -a -f --filter 'until=24h'"
                 }
             }
@@ -48,7 +38,6 @@ pipeline {
     }
     post {
         always {
-            // Limpa o workspace após a execução da pipeline
             cleanWs()
         }
     }
