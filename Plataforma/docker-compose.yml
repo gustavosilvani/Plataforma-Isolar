@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  plataforma:
+    build:
+      context: .
+      dockerfile: Plataforma/Dockerfile
+    ports:
+      - "4000:8080" # Expondo a porta 8080 do aplicativo .NET no porto 4000 do host
+      - "4001:8081" # Expondo uma segunda porta, se necessário
+    depends_on:
+      - mongo
+    environment:
+      - ConnectionStrings:DefaultConnection=mongodb://mongo:27017/plataforma
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017" # Porta padrão do MongoDB
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: plataforma
+      MONGO_INITDB_ROOT_PASSWORD: isolar@isolar
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongodb-data:
+
+networks:
+  app-network:
