@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     // Utiliza docker-compose para construir e subir os serviços
-                   sh "docker-compose up -d --build"
+                   sh "cd Plataforma && docker-compose up -d --build"
                 }
             }
         }
