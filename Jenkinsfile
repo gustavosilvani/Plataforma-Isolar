@@ -16,7 +16,7 @@ pipeline {
             steps {
                 script {
                     // Utiliza docker-compose para construir e subir os serviços
-                   sh "docker-compose up -d --build"
+                   sh "docker-compose up -d"
                 }
             }
         }
