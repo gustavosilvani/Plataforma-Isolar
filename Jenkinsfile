@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     // Utiliza docker-compose para parar e remover os serviços anteriores
-                    sh "docker-compose down"
+                    sh "docker-compose down --build"
                 }
             }
         }
