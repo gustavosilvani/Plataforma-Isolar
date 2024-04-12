@@ -9,6 +9,8 @@ services:
     ports:
       - "4000:8080"
       - "4001:8081"
+      - "4100:4100"
+      - "4101:4101"
     container_name: plataforma
     restart: unless-stopped
     depends_on:
