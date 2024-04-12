@@ -12,7 +12,7 @@
 
             var app = builder.Build();
 
-            await startup.Configure(app, builder.Environment);
+            startup.Configure(app, builder.Environment);
         }
     }
 }

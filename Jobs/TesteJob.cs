@@ -1,7 +1,7 @@
 ﻿using Jobs.Interfaces;
 
 namespace Jobs
-{    public class TesteJob : IJob
+{    public class TesteJob : ITesteJob
     {
         public void Executar()
         {

@@ -3,83 +3,93 @@ using Hangfire.Mongo;
 using Hangfire.Mongo.Migration.Strategies;
 using Hangfire.Mongo.Migration.Strategies.Backup;
 using HangfireBasicAuthenticationFilter;
+using Jobs.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 
 namespace Jobs
 {
     public class Startup
     {
-        public IConfiguration _configuration { get; }
+        public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddLogging(logging =>
+            // Configuração de Logging
+            services.AddLogging(loggingBuilder =>
             {
-                logging.ClearProviders();
-                logging.AddConsole();
+                loggingBuilder.ClearProviders();
+                loggingBuilder.AddConsole();
             });
 
-            var mongoUrlBuilder = new MongoUrlBuilder(_configuration.GetValue<string>("ConnectionStrings:HangfireConnection"));
-
+            // Configuração do cliente MongoDB
+            var mongoUrlBuilder = new MongoUrlBuilder(Configuration["ConnectionStrings:HangfireConnection"]);
             var mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
 
-            services.AddHangfire(configuration => configuration
-                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                 .UseSimpleAssemblyNameTypeSerializer()
-                 .UseRecommendedSerializerSettings()
-                 .UseMongoStorage(mongoClient, mongoUrlBuilder.DatabaseName, new MongoStorageOptions
-                 {
-                     MigrationOptions = new MongoMigrationOptions
-                     {
-                         MigrationStrategy = new MigrateMongoMigrationStrategy(),
-                         BackupStrategy = new CollectionMongoBackupStrategy()
-                     },
-                     Prefix = "hangfire.mongo.dte",
-                     CheckConnection = false,
-                     CheckQueuedJobsStrategy = CheckQueuedJobsStrategy.TailNotificationsCollection
+            // Configuração do Hangfire usando MongoDB
+            services.AddHangfire(config =>
+            {
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                      .UseSimpleAssemblyNameTypeSerializer()
+                      .UseRecommendedSerializerSettings()
+                      .UseMongoStorage(mongoClient, mongoUrlBuilder.DatabaseName, new MongoStorageOptions
+                      {
+                          MigrationOptions = new MongoMigrationOptions
+                          {
+                              MigrationStrategy = new MigrateMongoMigrationStrategy(),
+                              BackupStrategy = new CollectionMongoBackupStrategy()
+                          },
+                          Prefix = "hangfire.mongo",
+                          CheckConnection = false,
+                          CheckQueuedJobsStrategy = CheckQueuedJobsStrategy.TailNotificationsCollection
+                      });
+            });
 
-                 })
-             );
-
+            // Configuração do servidor Hangfire
             services.AddHangfireServer(serverOptions =>
             {
-                serverOptions.ServerName = "Hangfire.Mongo DT-e";
+                serverOptions.ServerName = "Hangfire.Mongo";
                 serverOptions.Queues = new[] { "alpha", "beta", "default" };
             });
 
-
-            services.AddScoped<TesteJob, TesteJob>();
+            // Registro de serviços
+            services.AddScoped<ITesteJob, TesteJob>();
         }
-        public async Task Configure(WebApplication app, IWebHostEnvironment env, IBackgroundJobClient? backgroundJobs = null)
-        {
 
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+        public void Configure(WebApplication app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs = null)
+        {
+            // Configuração do Dashboard do Hangfire
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
-                DashboardTitle = "DT-e Hanfire Dashboard",
-                Authorization = new[]{
-                new HangfireCustomBasicAuthenticationFilter{
-                    User = _configuration.GetSection("HangfireCredentials:UserName").Value,
-                    Pass = _configuration.GetSection("HangfireCredentials:Password").Value}}
+                DashboardTitle = "Hangfire Dashboard",
+                Authorization = new[]
+                {
+                    new HangfireCustomBasicAuthenticationFilter
+                    {
+                        User = Configuration["HangfireCredentials:UserName"],
+                        Pass = Configuration["HangfireCredentials:Password"]
+                    }
+                }
             });
 
             app.MapHangfireDashboard();
+            app.UseHangfireServer();
 
-            var recurringJobManager = app.Services.GetService<IRecurringJobManager>();
-            var configuration = app.Services.GetService<IConfiguration>();
-            //recurringJobManager.AddOrUpdate(, Hangfire.Common.Job.FromExpression<ITesteJob>(service => service.Executar()), );
+            var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
 
-            recurringJobManager.AddOrUpdate<TesteJob>(
-               "IService.Heartbeat",
-               job => job.Executar(),
-               "0 1/1 * * * *",
-               null
-           );
+            // Configuração de um trabalho recorrente
+            recurringJobManager.AddOrUpdate<ITesteJob>(
+                "IService.Heartbeat",
+                job => job.Executar(),
+                "0 1/1 * * * *"
+            );
 
             app.Run();
         }
