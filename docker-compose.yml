@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   plataforma:
@@ -9,9 +9,20 @@ services:
     ports:
       - "4000:8080"
       - "4001:8081"
+    container_name: plataforma
+    restart: unless-stopped
+    depends_on:
+      - mongo
+
+  plataforma-jobs:
+    image: plataforma-jobs:latest
+    build:
+      context: .
+      dockerfile: Jobs/Dockerfile
+    ports:
       - "4100:4100"
       - "4101:4101"
-    container_name: plataforma
+    container_name: Jobs
     restart: unless-stopped
     depends_on:
       - mongo

@@ -1,16 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
+	
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<InvariantGlobalization>true</InvariantGlobalization>
-		<UserSecretsId>5dd99094-d433-49fa-a44e-ddfccb3b10d5</UserSecretsId>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>.</DockerfileContext>
 	</PropertyGroup>
-	
-<ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Hangfire" Version="1.8.12" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.12" />
 		<PackageReference Include="Hangfire.Core" Version="1.8.12" />
@@ -18,5 +14,4 @@
 		<PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
 		<PackageReference Include="Hangfire.Mongo" Version="1.10.4" />
 	</ItemGroup>
-
 </Project>

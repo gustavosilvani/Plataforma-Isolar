@@ -15,13 +15,13 @@ COPY ./Infra.CrossCutting/ ./Infra.CrossCutting/
 COPY ./Dominio/ ./Dominio/
 
 # Define o diretório de trabalho para o projeto Plataforma
-WORKDIR /build/Plataforma
+WORKDIR /build/Jobs
 
 # Restaura as dependências do projeto
 RUN dotnet restore
 
 # Publica o projeto especificando o diretório de output
-RUN dotnet publish "Plataforma.csproj" -c Release -o /app
+RUN dotnet publish "Jobs.csproj" -c Release -o /app
 
 # Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
@@ -36,4 +36,4 @@ WORKDIR /app
 COPY --from=build /app .
 
 # Define o ponto de entrada para o contêiner
-ENTRYPOINT ["dotnet", "Plataforma.dll"]
+ENTRYPOINT ["dotnet", "Jobs.dll"]
