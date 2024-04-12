@@ -23,4 +23,4 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0.1
 WORKDIR /app
 COPY --from=build-env /app/out .
-CMD dotnet Plataforma.dll & dotnet Jobs.dll & wait
+ENTRYPOINT ["dotnet", "Plataforma.dll"]
