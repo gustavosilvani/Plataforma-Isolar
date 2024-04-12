@@ -20,8 +20,8 @@ services:
       context: .
       dockerfile: Jobs/Dockerfile
     ports:
-      - "4100:4100"
-      - "4101:4101"
+      - "4100:8080"
+      - "4101:8081"
     container_name: Jobs
     restart: unless-stopped
     depends_on:
