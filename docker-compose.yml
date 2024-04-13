@@ -37,12 +37,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: isolar@isolar
-
-  cleanup:
-    image: docker
-    command: /bin/sh -c "docker image prune -a -f --filter 'until=24h'"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
+  
 volumes:
   mongo_data:
