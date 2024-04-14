@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Infra.Data.Context;
 using Microsoft.AspNetCore.Http;
+using Dominio.Interfaces.Services;
+using Service.Services;
+using Infra.CrossCutting.Handlers.Notificacoes;
 
 namespace Infra.Ioc
 {
@@ -18,7 +21,7 @@ namespace Infra.Ioc
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CaixaPostal.Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Plataforma.Api", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -64,10 +67,8 @@ namespace Infra.Ioc
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-
-            //services.AddScoped<IUsuario, Usuario>();
-            //services.AddScoped<IAuthService, AuthService>();
-            
+            services.AddScoped<IHttpService, HttpService>();
+            services.AddScoped<INotificacaoHandler, NotificacaoHandler>();
 
 
             return services;

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Infra.CrossCutting\Infra.CrossCutting.csproj" />
     <ProjectReference Include="..\Infra.Ioc\Infra.Ioc.csproj" />
   </ItemGroup>
 
