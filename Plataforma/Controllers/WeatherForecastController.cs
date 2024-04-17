@@ -1,3 +1,4 @@
+using Dominio.Interfaces.Services.Integrações.Sungrow;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Plataforma.Controllers
@@ -6,28 +7,20 @@ namespace Plataforma.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
+      
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ISungrowAutenticacaoService _sungrowAutenticacaoService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ISungrowAutenticacaoService sungrowAutenticacaoService)
         {
             _logger = logger;
+            _sungrowAutenticacaoService = sungrowAutenticacaoService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task GetAsync()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+           var teste =  await _sungrowAutenticacaoService.Autenticar();
         }
     }
 }

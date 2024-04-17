@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Dominio.Interfaces.Services;
 using Service.Services;
 using Infra.CrossCutting.Handlers.Notificacoes;
+using Dominio.Interfaces.Services.Integrações.Sungrow;
+using Service.Services.Integrações.Sungrow;
 
 namespace Infra.Ioc
 {
@@ -69,7 +71,7 @@ namespace Infra.Ioc
         {
             services.AddScoped<IHttpService, HttpService>();
             services.AddScoped<INotificacaoHandler, NotificacaoHandler>();
-
+            services.AddScoped<ISungrowAutenticacaoService, SungrowAutenticacaoService>();
 
             return services;
         }

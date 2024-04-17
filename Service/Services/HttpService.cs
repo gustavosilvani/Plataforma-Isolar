@@ -15,7 +15,6 @@ namespace Service.Services
         private HttpClientHandler HttpClientHandler { get; set; }
         private HttpClient Client { get; set; }
         public HtmlDocument HtmlDocument { get; set; }
-        private HttpUtility HttpUtility { get; set; }
         private CookieContainer Cookies { get; set; }
         private bool RedirecionamentoManual { get; set; }
         private string ChavePublicaCertificadoDigital { get; set; }
@@ -28,10 +27,9 @@ namespace Service.Services
             this.RedirecionamentoForcado(false);
             this.Urls = new List<Uri>();
             this.HtmlDocument = new HtmlDocument();
-            this.HttpUtility = new HttpUtility();
         }
 
-        private async Task<HttpServiceDto> RequestAsync(HttpMethod type, string url, Dictionary<string, string> parametros = null, string stringContent = null, bool content = false)
+        private async Task<HttpServiceDto> RequestAsync(HttpMethod type, string url, Dictionary<string, string>? parametros = null, string? stringContent = null, bool content = false)
         {
             HttpRequestMessage requisicaoParametros = new HttpRequestMessage
             {
@@ -45,7 +43,7 @@ namespace Service.Services
                 {
                     requisicaoParametros.Content = new StringContent(stringContent, Encoding.UTF8, "application/json");
                 }
-                else
+                else if (parametros != null)
                     requisicaoParametros.Content = new FormUrlEncodedContent(parametros);
             }
 
@@ -68,7 +66,7 @@ namespace Service.Services
             };
         }
 
-        public async Task<HttpServiceDto> GetAsync(string url, Dictionary<string, string> parametros = null, string stringContent = null, bool content = false)
+        public async Task<HttpServiceDto> GetAsync(string url, Dictionary<string, string>? parametros = null, string? stringContent = null, bool content = false)
         {
             if (parametros != null)
             {
@@ -78,19 +76,24 @@ namespace Service.Services
             return await RequestAsync(HttpMethod.Get, url, parametros, stringContent, content);
         }
 
-        public async Task<HttpServiceDto> PostAsync(string url, Dictionary<string, string> parametros = null, string stringContent = null, bool content = true)
+        public async Task<HttpServiceDto> PostAsync(string url, Dictionary<string, string>? parametros = null, string? stringContent = null, bool content = true)
         {
             return await RequestAsync(HttpMethod.Post, url, parametros, stringContent, content);
         }
 
         private async Task<HttpServiceDto> ValidaRedirecionamento(HttpResponseMessage requisicao)
         {
-            if (requisicao.StatusCode == HttpStatusCode.Redirect)
+            if (requisicao != null && requisicao.StatusCode == HttpStatusCode.Redirect)
             {
-                return await GetAsync(requisicao.Headers.Location.OriginalString);
+                var urlRedirecionamento = requisicao.Headers.Location?.OriginalString;
+                if (!string.IsNullOrEmpty(urlRedirecionamento))
+                {
+                    return await GetAsync(urlRedirecionamento);
+                }
             }
-            return null;
+            return new HttpServiceDto();
         }
+
 
         private string AdicionaParametrosUrl(string url, Dictionary<string, string> parametros)
         {
@@ -128,16 +131,20 @@ namespace Service.Services
 
         public IDictionary<string, string> ObterCamposOcultos(HtmlNode response, IDictionary<string, string> parametros)
         {
-            var inputsOcultos = response.Descendants("input").ToList();
-            foreach (var item in inputsOcultos)
-            {
-                string name = item.Attributes["name"]?.Value ?? item.Attributes["id"]?.Value;
-                if (item.Attributes["value"]?.Value != null && name != null)
-                    parametros[name.Replace('–', '-')] = item.Attributes["value"].Value;
-            }
+            var inputsOcultos = response.Descendants("input");
+
+            if (inputsOcultos?.Count() > 0)
+                foreach (var item in inputsOcultos)
+                {
+                    string name = item.Attributes["name"]?.Value ?? item.Attributes["id"]?.Value ?? string.Empty;
+
+                    if (!string.IsNullOrEmpty(name) && item.Attributes["value"]?.Value != null)
+                        parametros[name.Replace('–', '-')] = item.Attributes["value"].Value;
+                }
 
             return parametros;
         }
+
 
         public void InstalaCetificadoDigital(string certificadoPFX, string certificadoSenha)
         {
@@ -171,10 +178,14 @@ namespace Service.Services
             return this;
         }
 
-        public dynamic ObterJson(HtmlNode retorno = null, string json = null)
+        public dynamic? ObterJson(HtmlNode? retorno, string? json = null)
         {
             if (retorno is not null)
                 json = retorno.InnerHtml;
+
+            if (string.IsNullOrEmpty(json))
+                return null;
+
             return JsonConvert.DeserializeObject(json);
         }
 
