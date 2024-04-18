@@ -10,12 +10,13 @@ namespace Dominio.Interfaces.Infra.Data
         Task<List<string>> GetDistinctAsync(FieldDefinition<T, string> campo, FilterDefinition<T> filtro);
         Task<List<T>> GetByExpressionAsync(Expression<Func<T, bool>> condicao);
         Task<T> GetOneByExpressionAsync(Expression<Func<T, bool>> condicao);
-        Task CreateOneAsync(T dto);
-        Task CreateManyAsync(List<T> dto);
-        Task<List<T>> CreateManyRetunAsync(List<T> dto);
+        Task CreateOneAsync(T entity);
+        Task CreateManyAsync(List<T> entity);
+        Task<List<T>> CreateManyRetunAsync(List<T> entity);
+        Task<T> CreateOrUpdateAsync(Expression<Func<T, bool>> condicao, T entity);
         Task DeleteAsync(FilterDefinition<T> filtro);
         Task DeleteOneAsync(Expression<Func<T, bool>> filtro);
         Task DeleteManyAsync(Expression<Func<T, bool>> filtro);
-        Task FindOneAndUpdateAsync(FilterDefinition<T> filtro, UpdateDefinition<T> dto);
+        Task FindOneAndUpdateAsync(FilterDefinition<T> filtro, UpdateDefinition<T> entity);
     }
 }

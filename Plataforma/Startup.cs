@@ -21,6 +21,7 @@ namespace Plataforma
             services.AddSwagger(_configuration);
             services.AddContext(_configuration);
             services.AddServices();
+            services.AddRepositorys();
             //services.AddScoped<ResultadoCustomizadoFiltro>();
 
             services.AddLogging(logging =>

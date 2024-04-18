@@ -1,13 +1,16 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Dominio.Interfaces.Infra.Data;
+using Dominio.Interfaces.Infra.Repository;
+using Dominio.Interfaces.Services;
+using Dominio.Interfaces.Services.Integracoes.Sungrow;
+using Infra.CrossCutting.Handlers.Notificacoes;
+using Infra.Data.Context;
+using Infra.Data.Repositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Infra.Data.Context;
-using Microsoft.AspNetCore.Http;
-using Dominio.Interfaces.Services;
+using Microsoft.OpenApi.Models;
 using Service.Services;
-using Infra.CrossCutting.Handlers.Notificacoes;
-using Dominio.Interfaces.Services.Integrações.Sungrow;
-using Service.Services.Integrações.Sungrow;
+using Service.Services.Integracoes.Sungrow;
 
 namespace Infra.Ioc
 {
@@ -55,13 +58,12 @@ namespace Infra.Ioc
 
         public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
         {
-            MongoDbContext.ConnectionString = configuration.GetSection("MongoConnection:ConnectionString").Value?? string.Empty;
+            MongoDbContext.ConnectionString = configuration.GetSection("MongoConnection:ConnectionString").Value ?? string.Empty;
             MongoDbContext.DatabaseName = configuration.GetSection("MongoConnection:Database").Value ?? string.Empty;
             MongoDbContext.IsSSL = Convert.ToBoolean(configuration.GetSection("MongoConnection:IsSSL").Value);
 
             services.AddSingleton<MongoDbContext>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
 
             return services;
         }
@@ -71,7 +73,17 @@ namespace Infra.Ioc
         {
             services.AddScoped<IHttpService, HttpService>();
             services.AddScoped<INotificacaoHandler, NotificacaoHandler>();
+            services.AddScoped<IMongoDbContext, MongoDbContext>();
+
             services.AddScoped<ISungrowAutenticacaoService, SungrowAutenticacaoService>();
+            services.AddScoped<ISungrowGerenciamentoPlantasService, SungrowGerenciamentoPlantasService>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddRepositorys(this IServiceCollection services)
+        {
+            services.AddScoped<IPlantaRepository, PlantaRepository>();
 
             return services;
         }

@@ -1,4 +1,4 @@
-﻿namespace Dominio.Interfaces.Services.Integrações.Sungrow
+﻿namespace Dominio.Interfaces.Services.Integracoes.Sungrow
 {
     public interface ISungrowAutenticacaoService
     {

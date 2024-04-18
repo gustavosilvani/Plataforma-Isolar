@@ -1,4 +1,4 @@
-using Dominio.Interfaces.Services.Integrações.Sungrow;
+using Dominio.Interfaces.Services.Integracoes.Sungrow;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Plataforma.Controllers
@@ -7,20 +7,20 @@ namespace Plataforma.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-      
-        private readonly ILogger<WeatherForecastController> _logger;
-        private readonly ISungrowAutenticacaoService _sungrowAutenticacaoService;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, ISungrowAutenticacaoService sungrowAutenticacaoService)
+        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ISungrowGerenciamentoPlantasService _sungrowGerenciamentoPlantasService;
+
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ISungrowGerenciamentoPlantasService sungrowGerenciamentoPlantasService)
         {
             _logger = logger;
-            _sungrowAutenticacaoService = sungrowAutenticacaoService;
+            _sungrowGerenciamentoPlantasService = sungrowGerenciamentoPlantasService;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
         public async Task GetAsync()
         {
-           var teste =  await _sungrowAutenticacaoService.Autenticar();
+            _sungrowGerenciamentoPlantasService.ExecutaCaptura();
         }
     }
 }

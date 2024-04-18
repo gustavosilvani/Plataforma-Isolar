@@ -11,6 +11,7 @@
 	</PropertyGroup>
 	
 <ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Hangfire" Version="1.8.12" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.12" />
 		<PackageReference Include="Hangfire.Core" Version="1.8.12" />
@@ -18,5 +19,10 @@
 		<PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
 		<PackageReference Include="Hangfire.Mongo" Version="1.10.4" />
 	</ItemGroup>
+	
+<ItemGroup>
+  <ProjectReference Include="..\Dominio\Dominio.csproj" />
+  <ProjectReference Include="..\Infra.Ioc\Infra.Ioc.csproj" />
+</ItemGroup>
 
 </Project>

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Services.Integrações.Sungrow
+namespace Service.Services.Integracoes.Sungrow
 {
-    internal class SungrowGerenciamentoDispositivosService
+    internal class SungrowPropriedadeDispositivosService
     {
     }
 }

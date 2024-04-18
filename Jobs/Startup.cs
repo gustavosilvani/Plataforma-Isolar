@@ -5,32 +5,36 @@ using Hangfire.Mongo.Migration.Strategies.Backup;
 using HangfireBasicAuthenticationFilter;
 using Jobs.Interfaces;
 using MongoDB.Driver;
+using Infra.Ioc;
 
 namespace Jobs
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        public IConfiguration _configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Configuração de Logging
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddContext(_configuration);
+            services.AddServices();
+            services.AddRepositorys();
+
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.AddConsole();
             });
 
-            // Configuração do cliente MongoDB
-            var mongoUrlBuilder = new MongoUrlBuilder(Configuration["ConnectionStrings:HangfireConnection"]);
+            var mongoUrlBuilder = new MongoUrlBuilder(_configuration["ConnectionStrings:HangfireConnection"]);
             var mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
 
-            // Configuração do Hangfire usando MongoDB
             services.AddHangfire(config =>
             {
                 config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
@@ -49,14 +53,12 @@ namespace Jobs
                       });
             });
 
-            // Configuração do servidor Hangfire
             services.AddHangfireServer(serverOptions =>
             {
                 serverOptions.ServerName = "Hangfire.Mongo";
                 serverOptions.Queues = new[] { "alpha", "beta", "default" };
             });
 
-            // Registro de serviços
             services.AddScoped<ITesteJob, TesteJob>();
         }
 
@@ -70,8 +72,8 @@ namespace Jobs
                 {
                     new HangfireCustomBasicAuthenticationFilter
                     {
-                        User = Configuration["HangfireCredentials:UserName"],
-                        Pass = Configuration["HangfireCredentials:Password"]
+                        User = _configuration["HangfireCredentials:UserName"],
+                        Pass = _configuration["HangfireCredentials:Password"]
                     }
                 }
             });
@@ -85,7 +87,7 @@ namespace Jobs
             recurringJobManager.AddOrUpdate<ITesteJob>(
                 "IService.Heartbeat",
                 job => job.Executar(),
-                "0 1/1 * * * *"
+                "0 0/10 * * * *"
             );
 
             app.Run();

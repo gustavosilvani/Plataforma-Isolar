@@ -1,8 +1,8 @@
 ﻿using Dominio.Interfaces.Services;
-using Dominio.Interfaces.Services.Integrações.Sungrow;
+using Dominio.Interfaces.Services.Integracoes.Sungrow;
 using Newtonsoft.Json;
 
-namespace Service.Services.Integrações.Sungrow
+namespace Service.Services.Integracoes.Sungrow
 {
     public class SungrowAutenticacaoService : ISungrowAutenticacaoService
     {
@@ -24,7 +24,7 @@ namespace Service.Services.Integrações.Sungrow
             var response = await _httpService.PostAsync(url, null, JsonConvert.SerializeObject(ObterParametros()));
             var json = _httpService.ObterJson(response.DocumentNode);
 
-            if (json?.Count > 0)
+            if (json != null)
                 return (string)json.result_data.token;
 
             return string.Empty;
