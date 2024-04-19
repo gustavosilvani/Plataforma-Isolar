@@ -58,9 +58,19 @@ namespace Service.Services.Integracoes.Sungrow
                         var tasks = new List<Task>();
                         foreach (var planta in json.result_data.pageList)
                         {
-                            tasks.Add(ProcessaPlanta(planta));
+                            if (planta != null)
+                            {
+                                tasks.Add(ProcessaPlanta(planta.ToString()));
+                            }
                         }
-                        await Task.WhenAll(tasks);
+                        try
+                        {
+                            await Task.WhenAll(tasks);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Erro durante o processamento paralelo: " + ex.Message);
+                        }
                         paginaAtual++;
                     }
                     else
@@ -73,7 +83,7 @@ namespace Service.Services.Integracoes.Sungrow
         {
             try
             {
-                SungrowRetornoPlantaListaDto plantaDto = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(plantaJson) ?? new SungrowRetornoPlantaListaDto();
+                SungrowRetornoPlantaListaDto plantaDto = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(plantaJson);
                 var plantaEntidade = await _plantaRepository.InserirAtualizar(x => x.Codigo == plantaDto.IdSistemaEnergia, _mapper.Map<Planta>(plantaDto));
 
                 if (plantaEntidade != null)
@@ -85,9 +95,10 @@ namespace Service.Services.Integracoes.Sungrow
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Erro: " + ex.Message);
+                Console.WriteLine("Erro ao processar planta: " + ex.Message);
             }
         }
+
 
         private Dictionary<string, string> ObterHeaders()
         {
