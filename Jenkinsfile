@@ -1,22 +1,29 @@
 pipeline {
-    agent any
+    agent any 
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                checkout scm 
             }
         }
-        stage('Construir e Subir Serviços') {
+        stage('Parar Serviços') {
             steps {
                 script {                   
-                    sh "docker-compose up -d --build --force-recreate"
+                    sh "docker-compose down"
                 }
             }
-        }        
+        }
+        stage('Construir e Subir Serviços') { 
+            steps {
+                script {                    
+                    sh "docker-compose up -d --build --no-cache"
+                }
+            }
+        }
     }
     post {
-        always {           
+        always {            
             cleanWs()
         }
     }
