@@ -13,13 +13,15 @@ namespace Service.Services.Integracoes.Sungrow
         private readonly IHttpService _httpService;
         private readonly ISungrowAutenticacaoService _sungrowAutenticacaoService;
         private readonly IPlantaRepository _plantaRepository;
+        private readonly IPlantaProducaoRepository _plantaProducaoRepository;
         private readonly IMapper _mapper;
 
-        public SungrowGerenciamentoPlantasService(IHttpService httpService, ISungrowAutenticacaoService sungrowAutenticacaoService, IPlantaRepository plantaRepository, IMapper mapper)
+        public SungrowGerenciamentoPlantasService(IHttpService httpService, ISungrowAutenticacaoService sungrowAutenticacaoService, IPlantaRepository plantaRepository, IPlantaProducaoRepository plantaProducaoRepository, IMapper mapper)
         {
             _httpService = httpService;
             _sungrowAutenticacaoService = sungrowAutenticacaoService;
             _plantaRepository = plantaRepository;
+            _plantaProducaoRepository = plantaProducaoRepository;
             _mapper = mapper;
         }
 
@@ -41,35 +43,51 @@ namespace Service.Services.Integracoes.Sungrow
             if (!string.IsNullOrEmpty(token))
             {
                 const string url = "https://gateway.isolarcloud.com.hk/openapi/getPowerStationList";
-
                 _httpService.ComHeaders(ObterHeaders());
 
-                var response = await _httpService.PostAsync(url, null, JsonConvert.SerializeObject(ObterParametros(token)));
-                var json = _httpService.ObterJson(response.DocumentNode);
+                bool haMaisPaginas = true;
+                int paginaAtual = 1;
 
-                if (json != null)
+                while (haMaisPaginas)
                 {
-                    List<SungrowRetornoPlantaListaDto> plantas = new List<SungrowRetornoPlantaListaDto>();
+                    var parametros = ObterParametros(token, paginaAtual.ToString());
+                    var response = await _httpService.PostAsync(url, null, JsonConvert.SerializeObject(parametros));
+                    var json = _httpService.ObterJson(response.DocumentNode);
 
-                    foreach (var planta in json.result_data.pageList)
+                    if (json != null && json.result_data.pageList.Count > 0)
                     {
-                        try
-                        {
-                            SungrowRetornoPlantaListaDto teste = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(planta.ToString());
 
-                            await _plantaRepository.InserirAtualizar(x => x.Codigo == teste.IdSistemaEnergia, _mapper.Map<Planta>(teste));
-                            plantas.Add(teste);
-                        }
-                        catch (JsonException ex)
+                        foreach (var planta in json.result_data.pageList)
                         {
-                            Console.WriteLine("Erro ao deserializar a planta: " + ex.Message);
+                            try
+                            {
+                                SungrowRetornoPlantaListaDto plantaDto = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(planta.ToString());
+
+                                var plantaEntidade = await _plantaRepository.InserirAtualizar(x => x.Codigo == plantaDto.IdSistemaEnergia, _mapper.Map<Planta>(plantaDto));
+
+                                if (plantaEntidade != null)
+                                {
+                                    var plantaProducao = _mapper.Map<PlantaProducao>(plantaDto);
+                                    plantaProducao.DefinirIdPlanta(plantaEntidade._id);
+
+                                    await _plantaProducaoRepository.Inserir(plantaProducao);
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Erro: " + ex.Message);
+                            }
                         }
+                        paginaAtual++;
                     }
+                    else
+                        haMaisPaginas = false;
+
                 }
-
             }
-
         }
+
 
         private Dictionary<string, string> ObterHeaders()
         {
@@ -81,14 +99,14 @@ namespace Service.Services.Integracoes.Sungrow
             };
         }
 
-        private Dictionary<string, string> ObterParametros(string token)
+        private Dictionary<string, string> ObterParametros(string token, string pagina)
         {
             return new Dictionary<string, string>
             {
                 { "token", token },
                 { "appkey", "7EAEAE90F1AB22F3EFF72E1FF044BDCB" },
                 { "lang", "_pt_BR" },
-                { "curPage", "1" },
+                { "curPage", pagina },
                 { "size", "10" }
             };
         }

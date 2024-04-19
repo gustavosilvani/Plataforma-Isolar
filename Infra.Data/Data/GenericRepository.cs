@@ -54,17 +54,25 @@ namespace Infra.Data.Data
             var update = Builders<T>.Update;
             var updateDefinition = new List<UpdateDefinition<T>>();
 
-            foreach (var prop in entity.GetType().GetProperties())
+            var properties = entity.GetType().GetProperties()
+                .Where(prop => prop.Name != "_id");
+
+            foreach (var prop in properties)
             {
                 var value = prop.GetValue(entity);
                 var field = prop.Name;
-                updateDefinition.Add(update.SetOnInsert(field, value));
+
+                if (value != null || field != "_id")
+                {
+                    updateDefinition.Add(update.SetOnInsert(field, value));
+                }
             }
 
             var combinedUpdateDefinition = update.Combine(updateDefinition);
 
             return await _dbContext.FindOneAndUpdateAsync(condicao, combinedUpdateDefinition, updateOptions);
         }
+
 
         #endregion
 

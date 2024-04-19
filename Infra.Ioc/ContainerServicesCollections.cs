@@ -84,6 +84,7 @@ namespace Infra.Ioc
         public static IServiceCollection AddRepositorys(this IServiceCollection services)
         {
             services.AddScoped<IPlantaRepository, PlantaRepository>();
+            services.AddScoped<IPlantaProducaoRepository, PlantaProducaoRepository>();
 
             return services;
         }
