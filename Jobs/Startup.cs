@@ -87,7 +87,7 @@ namespace Jobs
             recurringJobManager.AddOrUpdate<ITesteJob>(
                 "IService.Heartbeat",
                 job => job.Executar(),
-                "0 0/60 * * * *"
+                "0 0 1/1 * * *"
             );
 
             app.Run();
