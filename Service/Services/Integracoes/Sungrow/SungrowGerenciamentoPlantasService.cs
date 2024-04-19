@@ -29,7 +29,7 @@ namespace Service.Services.Integracoes.Sungrow
 
         public void ExecutaCaptura()
         {
-            CapturaPlantas();
+            _ = CapturaPlantas();
         }
 
         #endregion
@@ -39,7 +39,6 @@ namespace Service.Services.Integracoes.Sungrow
         private async Task CapturaPlantas()
         {
             string token = await _sungrowAutenticacaoService.Autenticar();
-
             if (!string.IsNullOrEmpty(token))
             {
                 const string url = "https://gateway.isolarcloud.com.hk/openapi/getPowerStationList";
@@ -56,38 +55,39 @@ namespace Service.Services.Integracoes.Sungrow
 
                     if (json != null && json.result_data.pageList.Count > 0)
                     {
-
+                        var tasks = new List<Task>();
                         foreach (var planta in json.result_data.pageList)
                         {
-                            try
-                            {
-                                SungrowRetornoPlantaListaDto plantaDto = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(planta.ToString());
-
-                                var plantaEntidade = await _plantaRepository.InserirAtualizar(x => x.Codigo == plantaDto.IdSistemaEnergia, _mapper.Map<Planta>(plantaDto));
-
-                                if (plantaEntidade != null)
-                                {
-                                    var plantaProducao = _mapper.Map<PlantaProducao>(plantaDto);
-                                    plantaProducao.DefinirIdPlanta(plantaEntidade._id);
-
-                                    await _plantaProducaoRepository.Inserir(plantaProducao);
-                                }
-
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine("Erro: " + ex.Message);
-                            }
+                            tasks.Add(ProcessaPlanta(planta));
                         }
+                        await Task.WhenAll(tasks);
                         paginaAtual++;
                     }
                     else
                         haMaisPaginas = false;
-
                 }
             }
         }
 
+        private async Task ProcessaPlanta(string plantaJson)
+        {
+            try
+            {
+                SungrowRetornoPlantaListaDto plantaDto = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(plantaJson) ?? new SungrowRetornoPlantaListaDto();
+                var plantaEntidade = await _plantaRepository.InserirAtualizar(x => x.Codigo == plantaDto.IdSistemaEnergia, _mapper.Map<Planta>(plantaDto));
+
+                if (plantaEntidade != null)
+                {
+                    var plantaProducao = _mapper.Map<PlantaProducao>(plantaDto);
+                    plantaProducao.DefinirIdPlanta(plantaEntidade._id);
+                    await _plantaProducaoRepository.Inserir(plantaProducao);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro: " + ex.Message);
+            }
+        }
 
         private Dictionary<string, string> ObterHeaders()
         {
