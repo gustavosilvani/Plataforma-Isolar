@@ -1,5 +1,6 @@
 pipeline {
-    agent any   
+    agent any
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,15 +9,14 @@ pipeline {
         }
         stage('Construir e Subir Serviços') {
             steps {
-                script {
-                    // Utiliza docker-compose para construir e subir os serviços
-                   sh "docker-compose up -d --build --no-cache"
+                script {                   
+                    sh "docker-compose up -d --build --no-cache"
                 }
             }
-        }          
+        }        
     }
     post {
-        always {
+        always {           
             cleanWs()
         }
     }
