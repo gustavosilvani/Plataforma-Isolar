@@ -17,7 +17,7 @@ pipeline {
         stage('Construir e Subir Serviços') { 
             steps {
                 script {                    
-                    sh "docker-compose up -d --build --no-cache"
+                    sh "docker-compose up -d --build"
                 }
             }
         }
