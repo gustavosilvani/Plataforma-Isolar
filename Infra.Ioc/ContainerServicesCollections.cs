@@ -76,6 +76,7 @@ namespace Infra.Ioc
             services.AddScoped<IMongoDbContext, MongoDbContext>();
 
             services.AddScoped<IPlantaService, PlantaService>();
+            services.AddScoped<IPlantaProducaoService, PlantaProducaoService>();
 
             services.AddScoped<ISungrowAutenticacaoService, SungrowAutenticacaoService>();
             services.AddScoped<ISungrowGerenciamentoPlantasService, SungrowGerenciamentoPlantasService>();

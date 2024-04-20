@@ -3,6 +3,7 @@
     public class PlantaDto
     {
         public string Nome { get; set; }
+        public int Codigo { get; set; }
         public double EnergiaTotal { get; set; }
         public string Localizacao { get; set; }
         public bool StatusConexaoRede { get; set; }

@@ -3,9 +3,9 @@ using Hangfire.Mongo;
 using Hangfire.Mongo.Migration.Strategies;
 using Hangfire.Mongo.Migration.Strategies.Backup;
 using HangfireBasicAuthenticationFilter;
+using Infra.Ioc;
 using Jobs.Interfaces;
 using MongoDB.Driver;
-using Infra.Ioc;
 
 namespace Jobs
 {
@@ -56,7 +56,7 @@ namespace Jobs
             services.AddHangfireServer(serverOptions =>
             {
                 serverOptions.ServerName = "Hangfire.Mongo";
-                serverOptions.Queues = new[] { "alpha", "beta", "default" };
+                serverOptions.Queues = new[] { "default" };
             });
 
             services.AddScoped<ITesteJob, TesteJob>();
@@ -85,10 +85,9 @@ namespace Jobs
 
             // Configuração de um trabalho recorrente
             recurringJobManager.AddOrUpdate<ITesteJob>(
-                "IService.Heartbeat",
+                "CapturarDados",
                 job => job.Executar(),
-                "0 0 1/1 * * *"
-            );
+                "0 5-20 * * *");
 
             app.Run();
         }

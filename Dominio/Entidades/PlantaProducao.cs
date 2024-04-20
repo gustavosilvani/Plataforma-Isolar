@@ -22,9 +22,9 @@ namespace Dominio.Entidades
             _idPlanta = idPlanta;
         }
 
-        public void DefinirDataCaptura(DateTime dataCaptura)
+        public void DefinirDataCaptura()
         {
-            DataCaptura = dataCaptura;
+            DataCaptura = DateTime.Now.Date;
         }
     }
 }

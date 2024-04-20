@@ -8,7 +8,9 @@ namespace Plataforma.Mapper
     {
         public PlantaMapper()
         {
-            CreateMap<Planta, PlantaDto>().ReverseMap();
+            CreateMap<Planta, PlantaDto>()
+                .ForMember(dest => dest.Codigo, opt => opt.MapFrom(src => src._id))
+                .ReverseMap();
         }
     }
 }

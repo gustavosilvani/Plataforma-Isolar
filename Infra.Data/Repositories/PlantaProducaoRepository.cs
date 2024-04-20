@@ -9,6 +9,9 @@ namespace Infra.Data.Repositories
     {
         public PlantaProducaoRepository(IMongoDbContext dbContext) : base(dbContext) { }
 
+        public async Task<List<PlantaProducao>> ObterPorPlanta(string idPlanta) =>
+            await GetByExpressionAsync(x => x._idPlanta == idPlanta);
+
         public async Task Inserir(PlantaProducao planta) =>
             await CreateOneAsync(planta);
 

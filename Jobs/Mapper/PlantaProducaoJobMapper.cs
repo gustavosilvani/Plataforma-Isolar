@@ -18,7 +18,7 @@ namespace Jobs.Mapper
                 .ForMember(dest => dest.DataAtualizacaoEnergiaHoje, opt => opt.MapFrom(src => src.DataAtualizacaoEnergiaHoje))
                 .ForMember(dest => dest.DataAtualizacaoCapacidadeTotal, opt => opt.MapFrom(src => src.DataAtualizacaoCapacidadeTotal))
                 .ForMember(dest => dest.DataAtualizacaoPotenciaAtual, opt => opt.MapFrom(src => src.DataAtualizacaoPotenciaAtual))
-                .AfterMap((src, dest) => dest.DefinirDataCaptura(DateTime.Now.Date))
+                .AfterMap((src, dest) => dest.DefinirDataCaptura())
                 .ReverseMap();
         }
     }
