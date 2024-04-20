@@ -26,6 +26,12 @@ RUN dotnet publish "Jobs.csproj" -c Release -o /app
 # Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
+# Instala o tzdata para suporte ao fuso horário
+RUN apt-get update && apt-get install -y tzdata
+
+# Define o fuso horário para o Brasil
+ENV TZ=America/Sao_Paulo
+
 # Define a variável de ambiente para o ambiente de desenvolvimento
 ENV ASPNETCORE_ENVIRONMENT=Development
 
