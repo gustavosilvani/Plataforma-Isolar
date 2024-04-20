@@ -24,7 +24,7 @@ namespace Dominio.Entidades
 
         public void DefinirDataCaptura()
         {
-            DataCaptura = DateTime.Now;
+            DataCaptura = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
         }
     }
 }
