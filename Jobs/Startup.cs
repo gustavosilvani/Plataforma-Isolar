@@ -87,7 +87,7 @@ namespace Jobs
             recurringJobManager.AddOrUpdate<ITesteJob>(
                 "CapturarDados",
                 job => job.Executar(),
-                "0 5-20 * * *");
+                "0 8-23 * * *");
 
             app.Run();
         }
