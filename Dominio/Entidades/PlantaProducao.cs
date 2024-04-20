@@ -24,7 +24,7 @@ namespace Dominio.Entidades
 
         public void DefinirDataCaptura()
         {
-            DataCaptura = DateTime.Now.Date;
+            DataCaptura = DateTime.Now;
         }
     }
 }
