@@ -4,9 +4,9 @@ using Dominio.Entidades;
 
 namespace Jobs.Mapper
 {
-    public class PlantaMapper : Profile
+    public class PlantaJobMapper : Profile
     {
-        public PlantaMapper()
+        public PlantaJobMapper()
         {
             CreateMap<Planta, SungrowRetornoPlantaListaDto>()
                 .ForMember(dest => dest.NomeSistemaEnergia, opt => opt.MapFrom(src => src.Nome))

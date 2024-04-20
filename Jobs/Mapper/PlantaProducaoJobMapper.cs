@@ -5,9 +5,9 @@ using Infra.CrossCutting.Helpers;
 
 namespace Jobs.Mapper
 {
-    public class PlantaProducaoMapper : Profile
+    public class PlantaProducaoJobMapper : Profile
     {
-        public PlantaProducaoMapper()
+        public PlantaProducaoJobMapper()
         {
             CreateMap<SungrowRetornoPlantaListaDto, PlantaProducao>()
                 .ForMember(dest => dest.PotenciaAtual, opt => opt.MapFrom(src => ConversaoHelpper.ParaDouble(src.PotenciaAtual.Valor)))

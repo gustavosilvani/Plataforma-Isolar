@@ -10,13 +10,15 @@ namespace Infra.Data.Repositories
     {
         public PlantaRepository(IMongoDbContext dbContext) : base(dbContext) { }
 
+
+        public async Task<List<Planta>> ObterTodos() =>
+            await GetAsync();
+
         public async Task Inserir(Planta planta) =>
             await CreateOneAsync(planta);
 
-        public async Task<Planta> InserirAtualizar(Expression<Func<Planta, bool>> condicao, Planta planta)
-        {
-            return await CreateOrUpdateAsync(condicao, planta);
-        }
+        public async Task<Planta> InserirAtualizar(Expression<Func<Planta, bool>> condicao, Planta planta) => 
+            await CreateOrUpdateAsync(condicao, planta);
 
     }
 }
