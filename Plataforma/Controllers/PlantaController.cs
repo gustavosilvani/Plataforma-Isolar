@@ -23,6 +23,12 @@ namespace Plataforma.Controllers
             return PResult(await _plantaService.ObterTodos());
         }
 
+        [HttpGet("Producao")]
+        public async Task<IActionResult> ObterProducaoComPlanta()
+        {
+            return PResult(await _plantaService.ObterTodosComProducao());
+        }
+
         [HttpGet("Producao/{idPlanta}")]
         public async Task<IActionResult> ObterProducaoPorPlanta(string idPlanta)
         {

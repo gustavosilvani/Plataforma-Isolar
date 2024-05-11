@@ -28,12 +28,9 @@ namespace Plataforma
             {
                 logging.ClearProviders();
                 logging.AddConsole();
-            });
-
-            var mongoUrlBuilder = new MongoUrlBuilder(_configuration.GetValue<string>("ConnectionStrings:HangfireConnection"));
-
-            var mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
+            });            
         }
+
         public async Task Configure(WebApplication app, IWebHostEnvironment env)
         {
             //if (app.Environment.IsDevelopment())
