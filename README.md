@@ -3,6 +3,9 @@
 ## Descrição
 Plataforma-Isolar é um projeto de software desenvolvido em .NET 8, utilizando Docker para facilidade de implantação e Jenkins para automação de builds e deployment. Este projeto está licenciado sob a licença MIT.
 
+## Fluxograma do projeto
+![image](https://github.com/gustavosilvani/Plataforma-Isolar/assets/23747845/45b16470-bc7f-46c8-b9ad-a19945ee48d8)
+
 ## Requisitos
 Para executar este projeto, você precisará dos seguintes requisitos:
 - .NET 8
@@ -25,4 +28,3 @@ Contribuições são bem-vindas! Para contribuir, por favor, siga os passos:
 
 ## Licença
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
