@@ -1,10 +1,10 @@
 ﻿using Dominio.Interfaces.Services;
 using Infra.CrossCutting.Handlers.Notificacoes;
+using Infra.CrossCutting.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
-using Infra.CrossCutting.Logs;
 
 namespace Plataforma.Controllers
 {
@@ -25,8 +25,8 @@ namespace Plataforma.Controllers
         public async Task<IActionResult> ObterTodos()
         {
 
-            string serverIp = "187.63.223.222"; 
-            int port = 62523;                    
+            string serverIp = "187.63.223.222";
+            int port = 62523;
 
             using (Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
@@ -47,7 +47,7 @@ namespace Plataforma.Controllers
                 }
                 catch (SocketException ex)
                 {
-                    LogService.TratarErro("Erro de rede: " + ex.Message);
+                    LogHelpper.TratarErro("Erro de rede: " + ex.Message);
                 }
                 finally
                 {
@@ -61,6 +61,6 @@ namespace Plataforma.Controllers
 
             return PResult();
         }
-       
+
     }
 }
