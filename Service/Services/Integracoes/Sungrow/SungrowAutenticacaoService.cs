@@ -1,4 +1,5 @@
-﻿using Dominio.Interfaces.Services;
+﻿using Dominio.Entidades;
+using Dominio.Interfaces.Services;
 using Dominio.Interfaces.Services.Integracoes.Sungrow;
 using Newtonsoft.Json;
 
@@ -7,6 +8,7 @@ namespace Service.Services.Integracoes.Sungrow
     public class SungrowAutenticacaoService : ISungrowAutenticacaoService
     {
         private readonly IHttpService _httpService;
+        private readonly SungrowConfiguracaoIntegracao sungrowConfiguracaoIntegracao = new SungrowConfiguracaoIntegracao();
 
         public SungrowAutenticacaoService(IHttpService httpService)
         {
@@ -17,7 +19,7 @@ namespace Service.Services.Integracoes.Sungrow
 
         public async Task<string> Autenticar()
         {
-            const string url = "https://gateway.isolarcloud.com.hk/openapi/login";
+            string url = $"{sungrowConfiguracaoIntegracao.UrlBase}login";
 
             _httpService.ComHeaders(ObterHeaders());
 
@@ -38,7 +40,7 @@ namespace Service.Services.Integracoes.Sungrow
         {
             return new Dictionary<string, string>
             {
-                { "appkey", "7EAEAE90F1AB22F3EFF72E1FF044BDCB" },
+                { "appkey", sungrowConfiguracaoIntegracao.AppKey },
                 { "user_account", "monitoramento@isolarenergy.com.br" },
                 { "user_password", "monitoramento@isolar1" },
                 { "lang", "_pt_BR" }
@@ -50,7 +52,7 @@ namespace Service.Services.Integracoes.Sungrow
             return new Dictionary<string, string>
             {
                 { "Content-Type", "application/json" },
-                { "x-access-key", "3ymjkg3buzeit21y5d4smh77ys55jcns" },
+                { "x-access-key", sungrowConfiguracaoIntegracao.AcessKey },
                 { "sys_code", "sys_code" }
             };
         }

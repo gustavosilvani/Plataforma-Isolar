@@ -15,6 +15,7 @@ namespace Service.Services.Integracoes.Sungrow
         private readonly IPlantaRepository _plantaRepository;
         private readonly IPlantaProducaoRepository _plantaProducaoRepository;
         private readonly IMapper _mapper;
+        private readonly SungrowConfiguracaoIntegracao sungrowConfiguracaoIntegracao = new SungrowConfiguracaoIntegracao();
 
         public SungrowGerenciamentoPlantasService(IHttpService httpService, ISungrowAutenticacaoService sungrowAutenticacaoService, IPlantaRepository plantaRepository, IPlantaProducaoRepository plantaProducaoRepository, IMapper mapper)
         {
@@ -41,7 +42,7 @@ namespace Service.Services.Integracoes.Sungrow
             string token = await _sungrowAutenticacaoService.Autenticar();
             if (!string.IsNullOrEmpty(token))
             {
-                const string url = "https://gateway.isolarcloud.com.hk/openapi/getPowerStationList";
+                string url = $"{sungrowConfiguracaoIntegracao.UrlBase}getPowerStationList";
                 _httpService.ComHeaders(ObterHeaders());
 
                 bool haMaisPaginas = true;
@@ -99,13 +100,12 @@ namespace Service.Services.Integracoes.Sungrow
             }
         }
 
-
         private Dictionary<string, string> ObterHeaders()
         {
             return new Dictionary<string, string>
             {
                 { "Content-Type", "application/json" },
-                { "x-access-key", "3ymjkg3buzeit21y5d4smh77ys55jcns" },
+                { "x-access-key", sungrowConfiguracaoIntegracao.AcessKey },
                 { "sys_code", "901" }
             };
         }
@@ -115,7 +115,7 @@ namespace Service.Services.Integracoes.Sungrow
             return new Dictionary<string, string>
             {
                 { "token", token },
-                { "appkey", "7EAEAE90F1AB22F3EFF72E1FF044BDCB" },
+                { "appkey", sungrowConfiguracaoIntegracao.AppKey },
                 { "lang", "_pt_BR" },
                 { "curPage", pagina },
                 { "size", "10" }
