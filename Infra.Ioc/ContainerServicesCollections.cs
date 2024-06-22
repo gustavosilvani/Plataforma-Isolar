@@ -77,9 +77,11 @@ namespace Infra.Ioc
 
             services.AddScoped<IPlantaService, PlantaService>();
             services.AddScoped<IPlantaProducaoService, PlantaProducaoService>();
+            services.AddScoped<IAlertaService, AlertaService>();
 
             services.AddScoped<ISungrowAutenticacaoService, SungrowAutenticacaoService>();
             services.AddScoped<ISungrowGerenciamentoPlantasService, SungrowGerenciamentoPlantasService>();
+            services.AddScoped<ISungrowAlarmesFalhasService, SungrowAlarmesFalhasService>();
 
             return services;
         }
@@ -88,6 +90,7 @@ namespace Infra.Ioc
         {
             services.AddScoped<IPlantaRepository, PlantaRepository>();
             services.AddScoped<IPlantaProducaoRepository, PlantaProducaoRepository>();
+            services.AddScoped<IAlertaRepository, AlertaRepository>();
 
             return services;
         }

@@ -10,11 +10,13 @@ namespace Plataforma.Controllers
     {
         private readonly IPlantaService _plantaService;
         private readonly IPlantaProducaoService _plantaProducaoService;
+        private readonly IAlertaService _alertaService;
 
-        public PlantaController(IPlantaService plantaService, INotificacaoHandler notificacaoHandler, IPlantaProducaoService plantaProducaoService) : base(notificacaoHandler)
+        public PlantaController(IPlantaService plantaService, INotificacaoHandler notificacaoHandler, IPlantaProducaoService plantaProducaoService, IAlertaService alertaService) : base(notificacaoHandler)
         {
             _plantaService = plantaService;
             _plantaProducaoService = plantaProducaoService;
+            _alertaService = alertaService;
         }
 
         [HttpGet]
@@ -33,6 +35,12 @@ namespace Plataforma.Controllers
         public async Task<IActionResult> ObterProducaoPorPlanta(string idPlanta)
         {
             return PResult(await _plantaProducaoService.ObterPorPlanta(idPlanta));
+        }
+
+        [HttpGet("Alerta")]
+        public async Task<IActionResult> ObterTodosAlertas()
+        {
+            return PResult(await _alertaService.ObterTodos());
         }
     }
 }

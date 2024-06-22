@@ -72,7 +72,7 @@ namespace Infra.CrossCutting.Helpers
                 .Enrich.WithProperty("Application", applicationName)
                 .WriteTo.Console()
                 .WriteTo.Debug()
-                .WriteTo.File(filePath, rollingInterval: RollingInterval.Infinite, shared: true)
+                .WriteTo.File(filePath, rollingInterval: RollingInterval.Infinite, shared: true, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}\n")
                 .CreateLogger();
         }
     }

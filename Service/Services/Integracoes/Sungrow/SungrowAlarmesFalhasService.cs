@@ -8,21 +8,19 @@ using Newtonsoft.Json;
 
 namespace Service.Services.Integracoes.Sungrow
 {
-    internal class SungrowAlarmesFalhasService
+    public class SungrowAlarmesFalhasService : ISungrowAlarmesFalhasService
     {
         private readonly IHttpService _httpService;
         private readonly ISungrowAutenticacaoService _sungrowAutenticacaoService;
-        private readonly IPlantaRepository _plantaRepository;
-        private readonly IPlantaProducaoRepository _plantaProducaoRepository;
+        private readonly IAlertaRepository _alertaRepository;
         private readonly IMapper _mapper;
         private readonly SungrowConfiguracaoIntegracao sungrowConfiguracaoIntegracao = new SungrowConfiguracaoIntegracao();
 
-        public SungrowAlarmesFalhasService(IHttpService httpService, ISungrowAutenticacaoService sungrowAutenticacaoService, IPlantaRepository plantaRepository, IPlantaProducaoRepository plantaProducaoRepository, IMapper mapper)
+        public SungrowAlarmesFalhasService(IHttpService httpService, ISungrowAutenticacaoService sungrowAutenticacaoService, IAlertaRepository alertaRepository, IMapper mapper)
         {
             _httpService = httpService;
             _sungrowAutenticacaoService = sungrowAutenticacaoService;
-            _plantaRepository = plantaRepository;
-            _plantaProducaoRepository = plantaProducaoRepository;
+            _alertaRepository = alertaRepository;
             _mapper = mapper;
         }
 
@@ -79,19 +77,12 @@ namespace Service.Services.Integracoes.Sungrow
             }
         }
 
-        private async Task ProcessaAlerta(string plantaJson)
+        private async Task ProcessaAlerta(string alertaJson)
         {
             try
             {
-                SungrowRetornoPlantaListaDto plantaDto = JsonConvert.DeserializeObject<SungrowRetornoPlantaListaDto>(plantaJson);
-                var plantaEntidade = await _plantaRepository.InserirAtualizar(x => x.Codigo == plantaDto.IdSistemaEnergia, _mapper.Map<Planta>(plantaDto));
-
-                if (plantaEntidade != null)
-                {
-                    var plantaProducao = _mapper.Map<PlantaProducao>(plantaDto);
-                    plantaProducao.DefinirIdPlanta(plantaEntidade._id);
-                    await _plantaProducaoRepository.Inserir(plantaProducao);
-                }
+                var alertaDto = JsonConvert.DeserializeObject<SungrowRetornoAlertaPlantaDto>(alertaJson);
+                await _alertaRepository.InserirAtualizar(x => x.Codigo == alertaDto.IdPs, _mapper.Map<Alerta>(alertaDto));
             }
             catch (Exception ex)
             {
