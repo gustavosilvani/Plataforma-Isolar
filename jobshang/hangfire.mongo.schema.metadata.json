@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"764b1a84bee44feb840fb976e89f201e","collectionName":"hangfire.mongo.schema","type":"collection"}

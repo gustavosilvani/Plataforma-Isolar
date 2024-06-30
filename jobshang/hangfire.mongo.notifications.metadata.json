@@ -1,0 +1,1 @@
+{"options":{"capped":true,"size":{"$numberInt":"16777216"},"max":{"$numberInt":"100000"}},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"468ef0828ab740b1926c40d4237fb9ff","collectionName":"hangfire.mongo.notifications","type":"collection"}
