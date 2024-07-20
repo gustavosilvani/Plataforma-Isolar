@@ -43,7 +43,7 @@ namespace Service.Services.Integracoes.Sungrow
             };
         }
 
-        protected async Task ExecutaCaptura(string token)
+        protected async Task ExecutaCaptura(string token, string url)
         {
             if (string.IsNullOrEmpty(token)) return;
 
@@ -51,9 +51,7 @@ namespace Service.Services.Integracoes.Sungrow
             bool haMaisPaginas = true;
             int paginaAtual = 1;
 
-            while (haMaisPaginas)
-            {
-                string url = $"{baseUrl}getPowerStationList";
+            while (haMaisPaginas)            {
 
                 var response = await _httpService.PostAsync(url, null, JsonSerializer.Serialize(ObterParametros(token, paginaAtual.ToString())));
                 var json = JsonSerializer.Deserialize<dynamic>(response.DocumentNode.InnerText);
