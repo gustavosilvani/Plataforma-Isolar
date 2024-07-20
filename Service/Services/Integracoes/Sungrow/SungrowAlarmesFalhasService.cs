@@ -21,7 +21,7 @@ namespace Service.Services.Integracoes.Sungrow
         public async Task ExecutaCaptura()
         {
             string url = $"{sungrowConfiguracaoIntegracao.UrlBase}getFaultAlarmInfo";
-            await ExecutaCaptura(await AutenticarEPreparar());
+            await ExecutaCaptura(await AutenticarEPreparar(),url);
         }
 
         protected override async Task Processar(string alertaJson)
