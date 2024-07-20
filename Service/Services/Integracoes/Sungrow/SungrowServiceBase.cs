@@ -47,7 +47,6 @@ namespace Service.Services.Integracoes.Sungrow
         {
             if (string.IsNullOrEmpty(token)) return;
 
-            string baseUrl = _configuracaoIntegracao.UrlBase;
             bool haMaisPaginas = true;
             int paginaAtual = 1;
 
