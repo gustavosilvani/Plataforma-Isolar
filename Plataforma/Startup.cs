@@ -1,5 +1,4 @@
 ﻿using Infra.Ioc;
-using MongoDB.Driver;
 
 namespace Plataforma
 {
@@ -28,7 +27,7 @@ namespace Plataforma
             {
                 logging.ClearProviders();
                 logging.AddConsole();
-            });            
+            });
         }
 
         public async Task Configure(WebApplication app, IWebHostEnvironment env)

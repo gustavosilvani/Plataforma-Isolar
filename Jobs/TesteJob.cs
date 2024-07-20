@@ -2,7 +2,8 @@
 using Jobs.Interfaces;
 
 namespace Jobs
-{    public class TesteJob : ITesteJob
+{
+    public class TesteJob : ITesteJob
     {
         private readonly ISungrowGerenciamentoPlantasService _sungrowGerenciamentoPlantasService;
         private readonly ISungrowAlarmesFalhasService _sungrowAlarmesFalhasService;
@@ -16,7 +17,7 @@ namespace Jobs
         public void Executar()
         {
             Console.WriteLine($"Teste às {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}");
-            _sungrowGerenciamentoPlantasService.ExecutaCaptura();
+            _sungrowGerenciamentoPlantasService.ExecutaCapturaAsync();
             _sungrowAlarmesFalhasService.ExecutaCaptura();
         }
     }

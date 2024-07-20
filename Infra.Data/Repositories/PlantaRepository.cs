@@ -17,7 +17,7 @@ namespace Infra.Data.Repositories
         public async Task Inserir(Planta planta) =>
             await CreateOneAsync(planta);
 
-        public async Task<Planta> InserirAtualizar(Expression<Func<Planta, bool>> condicao, Planta planta) => 
+        public async Task<Planta> InserirAtualizar(Expression<Func<Planta, bool>> condicao, Planta planta) =>
             await CreateOrUpdateAsync(condicao, planta);
 
     }

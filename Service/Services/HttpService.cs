@@ -3,6 +3,7 @@ using Dominio.Interfaces.Services;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using System.Net;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Web;
@@ -158,6 +159,19 @@ namespace Service.Services
             this.Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0");
         }
 
+        public void InstalaCetificadoDigital(X509Certificate2 certificado)
+        {
+            this.RedirecionamentoForcado(false);
+            HttpClientHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            HttpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            HttpClientHandler.ClientCertificates.Add(certificado);
+
+            this.ChavePublicaCertificadoDigital = Convert.ToBase64String(HttpClientHandler.ClientCertificates[0].GetRawCertData());
+
+            Client = new HttpClient(HttpClientHandler);
+            this.Client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0");
+        }
+
         public IHttpService ComHeaders(IDictionary<string, string> parametros)
         {
             this.Client = new HttpClient(this.HttpClientHandler);
@@ -203,31 +217,51 @@ namespace Service.Services
             return this.ChavePublicaCertificadoDigital;
         }
 
-        public X509Certificate2 CriarCertificado(string certPath, string keyPath)
+        public X509Certificate2 CriarCertificado(string certPath, string keyPath, string password)
         {
+            // Ler o conteúdo do certificado e da chave privada
+            var certPem = File.ReadAllText(certPath);
+            var keyPem = File.ReadAllText(keyPath);
 
-        var certPem = File.ReadAllText(certPath);
-        var keyPem = File.ReadAllText(keyPath);
+            // Remover cabeçalhos e rodapés do PEM e quaisquer espaços/brancos adicionais
+            certPem = certPem.Replace("-----BEGIN CERTIFICATE-----", "")
+                             .Replace("-----END CERTIFICATE-----", "")
+                             .Replace("\r", "")
+                             .Replace("\n", "")
+                             .Trim();
 
-        certPem = certPem.Replace("-----BEGIN CERTIFICATE-----", "")
-                         .Replace("-----END CERTIFICATE-----", "")
-                         .Replace("\r", "")
-                         .Replace("\n", "");
-        
-        keyPem = keyPem.Replace("-----BEGIN PRIVATE KEY-----", "")
-                       .Replace("-----END PRIVATE KEY-----", "")
-                       .Replace("\r", "")
-                       .Replace("\n", "");
+            keyPem = keyPem.Replace("-----BEGIN ENCRYPTED PRIVATE KEY-----", "")
+                           .Replace("-----END ENCRYPTED PRIVATE KEY-----", "")
+                           .Replace("\r", "")
+                           .Replace("\n", "")
+                           .Trim();
 
-        var certBytes = Convert.FromBase64String(certPem);
-        var keyBytes = Convert.FromBase64String(keyPem);
+            // Verificar se as strings resultantes são válidas Base64
+            if (!IsBase64String(certPem) || !IsBase64String(keyPem))
+            {
+                throw new FormatException("A entrada não é uma string Base-64 válida.");
+            }
 
-        var cert = new X509Certificate2(certBytes);
-        var rsa = RSA.Create();
-        rsa.ImportRSAPrivateKey(keyBytes, out _);
+            // Decodificar o conteúdo Base64
+            var certBytes = Convert.FromBase64String(certPem);
+            var keyBytes = Convert.FromBase64String(keyPem);
 
-        return cert.CopyWithPrivateKey(rsa);
+            // Criar o certificado com a chave privada
+            var cert = new X509Certificate2(certBytes);
+            var rsa = RSA.Create();
 
+            // Descriptografar e importar a chave privada
+            rsa.ImportEncryptedPkcs8PrivateKey(Encoding.UTF8.GetBytes(password), keyBytes, out _);
+
+            return cert.CopyWithPrivateKey(rsa);
         }
+
+        static bool IsBase64String(string s)
+        {
+            Span<byte> buffer = new Span<byte>(new byte[s.Length]);
+            return Convert.TryFromBase64String(s, buffer, out _);
+        }
+
+
     }
 }

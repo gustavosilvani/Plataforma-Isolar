@@ -1,12 +1,7 @@
 ﻿using Dominio.Interfaces.Services;
 using Dominio.Interfaces.Services.Integracoes.Sungrow;
 using Infra.CrossCutting.Handlers.Notificacoes;
-using Infra.CrossCutting.Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Service.Services.Integracoes.Sungrow;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 
 namespace Plataforma.Controllers
 {
@@ -33,9 +28,10 @@ namespace Plataforma.Controllers
         {
             string certPath = @"C:\Workspace\Plataforma-Isolar\certificado.crt";
             string keyPath = @"C:\Workspace\Plataforma-Isolar\chave.key";
-            _httpService.CriarCertificado(certPath,keyPath);
+            _httpService.InstalaCetificadoDigital(_httpService.CriarCertificado(certPath, keyPath, "Isolar@3025"));
 
-            _httpService.GetAsync("187.63.223.222:62523");
+            var url = "http://189.63.223.222:62523";
+            var response = await _httpService.GetAsync(url);
 
             return PResult();
         }

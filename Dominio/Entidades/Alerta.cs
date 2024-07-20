@@ -1,4 +1,6 @@
-﻿namespace Dominio.Entidades
+﻿using Dominio.Enumeradores;
+
+namespace Dominio.Entidades
 {
     public class Alerta : EntidadeBase
     {
@@ -22,5 +24,6 @@
         public string NomeTipo { get; set; }
         public string NomeFalha { get; set; }
         public string TempoExcedido { get; set; }
+        public TipoIntegracao TipoIntegracao { get; private set; }
     }
 }

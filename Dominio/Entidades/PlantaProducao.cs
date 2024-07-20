@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Dominio.Enumeradores;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Dominio.Entidades
@@ -16,6 +17,7 @@ namespace Dominio.Entidades
         public string DataAtualizacaoCapacidadeTotal { get; private set; }
         public string DataAtualizacaoPotenciaAtual { get; private set; }
         public DateTime DataCaptura { get; private set; }
+        public TipoIntegracao TipoIntegracao { get; private set; }
 
         public void DefinirIdPlanta(string idPlanta)
         {

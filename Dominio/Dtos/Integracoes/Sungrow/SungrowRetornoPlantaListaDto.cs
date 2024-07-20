@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dominio.Enumeradores;
+using Newtonsoft.Json;
 
 namespace Dominio.Dtos.Integracoes.Sungrow
 {
@@ -114,6 +115,8 @@ namespace Dominio.Dtos.Integracoes.Sungrow
 
         [JsonProperty("fault_count")]
         public int ContagemFalhas { get; set; }  // Contagem de falhas reportadas pelo sistema.
+
+        public TipoIntegracao TipoIntegracao { get; set; } = TipoIntegracao.Sungrow;  // Tipo de integração.
     }
 
     public class SungrowUnidadeValorDto

@@ -1,4 +1,6 @@
-﻿namespace Dominio.Entidades
+﻿using Dominio.Enumeradores;
+
+namespace Dominio.Entidades
 {
     public class Planta : EntidadeBase
     {
@@ -12,5 +14,6 @@
         public string HoraEquivalente { get; private set; }
         public double ReducaoTotalCO2 { get; private set; }
         public int ContagemFalhas { get; private set; }
+        public TipoIntegracao TipoIntegracao { get; private set; }
     }
 }

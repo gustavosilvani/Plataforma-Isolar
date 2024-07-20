@@ -19,6 +19,7 @@ namespace Jobs.Mapper
                 .ForPath(dest => dest.HoraEquivalente.Valor, opt => opt.MapFrom(src => src.HoraEquivalente))
                 .ForPath(dest => dest.ReducaoTotalCO2.Valor, opt => opt.MapFrom(src => src.ReducaoTotalCO2))
                 .ForMember(dest => dest.ContagemFalhas, opt => opt.MapFrom(src => src.ContagemFalhas))
+                .ForMember(dest => dest.TipoIntegracao, opt => opt.MapFrom(src => src.TipoIntegracao))
                 .ReverseMap();
         }
     }

@@ -8,79 +8,42 @@ using Newtonsoft.Json;
 
 namespace Service.Services.Integracoes.Sungrow
 {
-    public class SungrowGerenciamentoPlantasService : ISungrowGerenciamentoPlantasService
+    public class SungrowGerenciamentoPlantasService : SungrowServiceBase, ISungrowGerenciamentoPlantasService
     {
-        private readonly IHttpService _httpService;
-        private readonly ISungrowAutenticacaoService _sungrowAutenticacaoService;
         private readonly IPlantaRepository _plantaRepository;
         private readonly IPlantaProducaoRepository _plantaProducaoRepository;
-        private readonly IMapper _mapper;
-        private readonly SungrowConfiguracaoIntegracao sungrowConfiguracaoIntegracao = new SungrowConfiguracaoIntegracao();
 
-        public SungrowGerenciamentoPlantasService(IHttpService httpService, ISungrowAutenticacaoService sungrowAutenticacaoService, IPlantaRepository plantaRepository, IPlantaProducaoRepository plantaProducaoRepository, IMapper mapper)
+        public SungrowGerenciamentoPlantasService(IHttpService httpService, ISungrowAutenticacaoService autenticacaoService, IPlantaRepository plantaRepository, IPlantaProducaoRepository plantaProducaoRepository, IMapper mapper)
+            : base(httpService, autenticacaoService, mapper)
         {
-            _httpService = httpService;
-            _sungrowAutenticacaoService = sungrowAutenticacaoService;
             _plantaRepository = plantaRepository;
             _plantaProducaoRepository = plantaProducaoRepository;
-            _mapper = mapper;
         }
 
         #region Metodos Publicos
 
-        public void ExecutaCaptura()
+        public async Task ExecutaCapturaAsync()
         {
-            _ = CapturaPlantas();
+            await ExecutaCaptura(await AutenticarEPreparar());
         }
 
         #endregion
 
-        #region Metodos Privados
+        #region Metodos Privados        
 
-        private async Task CapturaPlantas()
+        protected override Dictionary<string, string> ObterParametros(string token, string pagina)
         {
-            string token = await _sungrowAutenticacaoService.Autenticar();
-            if (!string.IsNullOrEmpty(token))
+            return new Dictionary<string, string>
             {
-                string url = $"{sungrowConfiguracaoIntegracao.UrlBase}getPowerStationList";
-                _httpService.ComHeaders(ObterHeaders());
-
-                bool haMaisPaginas = true;
-                int paginaAtual = 1;
-
-                while (haMaisPaginas)
-                {
-                    var parametros = ObterParametros(token, paginaAtual.ToString());
-                    var response = await _httpService.PostAsync(url, null, JsonConvert.SerializeObject(parametros));
-                    var json = _httpService.ObterJson(response.DocumentNode);
-
-                    if (json != null && json.result_data.pageList.Count > 0)
-                    {
-                        var tasks = new List<Task>();
-                        foreach (var planta in json.result_data.pageList)
-                        {
-                            if (planta != null)
-                            {
-                                tasks.Add(ProcessaPlanta(planta.ToString()));
-                            }
-                        }
-                        try
-                        {
-                            await Task.WhenAll(tasks);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Erro durante o processamento paralelo: " + ex.Message);
-                        }
-                        paginaAtual++;
-                    }
-                    else
-                        haMaisPaginas = false;
-                }
-            }
+                { "token", token },
+                { "appkey", _configuracaoIntegracao.AppKey },
+                { "lang", "_pt_BR" },
+                { "curPage", pagina },
+                { "size", "10" }
+            };
         }
 
-        private async Task ProcessaPlanta(string plantaJson)
+        protected override async Task Processar(string plantaJson)
         {
             try
             {
@@ -98,28 +61,6 @@ namespace Service.Services.Integracoes.Sungrow
             {
                 Console.WriteLine("Erro ao processar planta: " + ex.Message);
             }
-        }
-
-        private Dictionary<string, string> ObterHeaders()
-        {
-            return new Dictionary<string, string>
-            {
-                { "Content-Type", "application/json" },
-                { "x-access-key", sungrowConfiguracaoIntegracao.AcessKey },
-                { "sys_code", "901" }
-            };
-        }
-
-        private Dictionary<string, string> ObterParametros(string token, string pagina)
-        {
-            return new Dictionary<string, string>
-            {
-                { "token", token },
-                { "appkey", sungrowConfiguracaoIntegracao.AppKey },
-                { "lang", "_pt_BR" },
-                { "curPage", pagina },
-                { "size", "10" }
-            };
         }
 
         #endregion

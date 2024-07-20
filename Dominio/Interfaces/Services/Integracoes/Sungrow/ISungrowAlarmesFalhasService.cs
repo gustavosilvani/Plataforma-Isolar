@@ -2,7 +2,7 @@
 {
     public interface ISungrowAlarmesFalhasService
     {
-        void ExecutaCaptura();
+        Task ExecutaCaptura();
 
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface ISungrowGerenciamentoPlantasService
     {
-        void ExecutaCaptura();
+        Task ExecutaCapturaAsync();
     }
 }

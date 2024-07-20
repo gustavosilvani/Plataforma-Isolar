@@ -14,4 +14,4 @@ public class Program
 
         await startup.Configure(app, builder.Environment);
     }
-}  
+}
