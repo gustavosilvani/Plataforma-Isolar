@@ -20,7 +20,7 @@ namespace Service.Services.Integracoes.Sungrow
 
         public async Task ExecutaCaptura()
         {
-            string url = $"{sungrowConfiguracaoIntegracao.UrlBase}getFaultAlarmInfo";
+            string url = $"{_configuracaoIntegracao.UrlBase}getFaultAlarmInfo";
             await ExecutaCaptura(await AutenticarEPreparar(),url);
         }
 

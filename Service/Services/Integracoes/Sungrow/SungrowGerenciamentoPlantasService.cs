@@ -24,7 +24,7 @@ namespace Service.Services.Integracoes.Sungrow
 
         public async Task ExecutaCapturaAsync()
         {
-            string url = $"{baseUrl}getPowerStationList";
+            string url = $"{_configuracaoIntegracao.baseUrl}getPowerStationList";
             await ExecutaCaptura(await AutenticarEPreparar(),url);
         }
 
