@@ -15,22 +15,27 @@ namespace Plataforma.Controllers
     public class ServicoTesteController : AbstractControllerBase
     {
         private readonly IPlantaService _plantaService;
+        private readonly IHttpService _httpService;
         private readonly IPlantaProducaoService _plantaProducaoService;
         private readonly ISungrowAlarmesFalhasService _sungrowAlarmesFalhasService;
 
 
-        public ServicoTesteController(IPlantaService plantaService, INotificacaoHandler notificacaoHandler, IPlantaProducaoService plantaProducaoService, ISungrowAlarmesFalhasService sungrowAlarmesFalhasService) : base(notificacaoHandler)
+        public ServicoTesteController(IPlantaService plantaService, INotificacaoHandler notificacaoHandler, IPlantaProducaoService plantaProducaoService, ISungrowAlarmesFalhasService sungrowAlarmesFalhasService, IHttpService httpService) : base(notificacaoHandler)
         {
             _plantaService = plantaService;
             _plantaProducaoService = plantaProducaoService;
             _sungrowAlarmesFalhasService = sungrowAlarmesFalhasService;
+            _httpService = httpService;
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterTodos()
         {
+            string certPath = @"C:\Workspace\Plataforma-Isolar\certificado.crt";
+            string keyPath = @"C:\Workspace\Plataforma-Isolar\chave.key";
+            _httpService.CriarCertificado(certPath,keyPath);
 
-            _sungrowAlarmesFalhasService.ExecutaCaptura();
+            _httpService.GetAsync("187.63.223.222:62523");
 
             return PResult();
         }

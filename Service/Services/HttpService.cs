@@ -94,7 +94,6 @@ namespace Service.Services
             return new HttpServiceDto();
         }
 
-
         private string AdicionaParametrosUrl(string url, Dictionary<string, string> parametros)
         {
             var uriBuilder = new UriBuilder(url);
@@ -202,6 +201,33 @@ namespace Service.Services
         public string ObterChavePublicaCertificado()
         {
             return this.ChavePublicaCertificadoDigital;
+        }
+
+        public X509Certificate2 CriarCertificado(string certPath, string keyPath)
+        {
+
+        var certPem = File.ReadAllText(certPath);
+        var keyPem = File.ReadAllText(keyPath);
+
+        certPem = certPem.Replace("-----BEGIN CERTIFICATE-----", "")
+                         .Replace("-----END CERTIFICATE-----", "")
+                         .Replace("\r", "")
+                         .Replace("\n", "");
+        
+        keyPem = keyPem.Replace("-----BEGIN PRIVATE KEY-----", "")
+                       .Replace("-----END PRIVATE KEY-----", "")
+                       .Replace("\r", "")
+                       .Replace("\n", "");
+
+        var certBytes = Convert.FromBase64String(certPem);
+        var keyBytes = Convert.FromBase64String(keyPem);
+
+        var cert = new X509Certificate2(certBytes);
+        var rsa = RSA.Create();
+        rsa.ImportRSAPrivateKey(keyBytes, out _);
+
+        return cert.CopyWithPrivateKey(rsa);
+
         }
     }
 }
