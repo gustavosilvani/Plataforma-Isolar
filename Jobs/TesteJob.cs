@@ -14,7 +14,7 @@ namespace Jobs
             _sungrowAlarmesFalhasService = sungrowAlarmesFalhasService;
         }
 
-        public void Executar()
+        public void ExecutarAsync()
         {
             Console.WriteLine($"Teste às {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}");
             _sungrowGerenciamentoPlantasService.ExecutaCapturaAsync();

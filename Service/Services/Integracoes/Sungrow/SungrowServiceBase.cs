@@ -50,32 +50,44 @@ namespace Service.Services.Integracoes.Sungrow
             bool haMaisPaginas = true;
             int paginaAtual = 1;
 
-            while (haMaisPaginas)            {
-
-                var response = await _httpService.PostAsync(url, null, JsonSerializer.Serialize(ObterParametros(token, paginaAtual.ToString())));
-                var json = JsonSerializer.Deserialize<dynamic>(response.DocumentNode.InnerText);
-
-                if (json?.result_data?.pageList?.Count > 0)
+            while (haMaisPaginas)
+            {
+                try
                 {
-                    var tasks = new List<Task>();
+                    var response = await _httpService.PostAsync(url, null, JsonSerializer.Serialize(ObterParametros(token, paginaAtual.ToString())));
 
-                    foreach (var item in json.result_data.pageList)
-                    {
-                        tasks.Add(Processar(item.ToString()));
-                    }
+                    var json = _httpService.ObterJson(response.DocumentNode);
 
-                    try
+                    if (json?.result_data?.pageList?.Count > 0)
                     {
-                        await Task.WhenAll(tasks);
+                        var tasks = new List<Task>();
+
+                        foreach (var item in json.result_data.pageList)
+                        {
+                            tasks.Add(Processar(item.ToString()));
+                        }
+
+                        try
+                        {
+                            await Task.WhenAll(tasks);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Erro durante o processamento paralelo: " + ex.Message);
+                        }
+
+                        paginaAtual++;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Console.WriteLine("Erro durante o processamento paralelo: " + ex.Message);
+                        haMaisPaginas = false;
                     }
-                    paginaAtual++;
                 }
-                else
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Erro ao executar captura na página " + paginaAtual + ": " + ex.Message);
                     haMaisPaginas = false;
+                }
             }
         }
 

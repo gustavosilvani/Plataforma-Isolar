@@ -2,6 +2,6 @@
 {
     public interface IJob
     {
-        void Executar();
+        void ExecutarAsync();
     }
 }

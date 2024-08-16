@@ -86,7 +86,7 @@ namespace Jobs
             // Configuração de um trabalho recorrente
             recurringJobManager.AddOrUpdate<ITesteJob>(
                 "CapturarDados",
-                job => job.Executar(),
+                job => job.ExecutarAsync(),
                 "0 8-23 * * *");
 
             app.Run();
